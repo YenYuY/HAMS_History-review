@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>門禁紀錄查詢</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="masthead">
+    <div class="frame masthead-content">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>門禁管理</div>
+      <div class="source" id="source" data-state="loading" role="status">
+        <span class="source-dot" aria-hidden="true"></span>
+        <span id="source-status">正在讀取資料</span>
+        <span class="source-name" id="source-name" hidden></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="frame workspace" id="main">
+    <div class="page-top">
+      <h1>門禁紀錄查詢</h1>
+      <form id="year-form" class="year-form">
+        <label for="year">年</label>
+        <select id="year" name="year" disabled required><option value="">載入中</option></select>
+        <button type="submit" id="year-query" class="button button-secondary" disabled>查詢</button>
+      </form>
+    </div>
+
+    <section class="panel query-panel" aria-labelledby="query-heading">
+      <div class="panel-heading">
+        <h2 id="query-heading">查詢條件</h2>
+      </div>
+      <form id="filters">
+        <fieldset class="filter-fields" id="filter-fields" disabled>
+          <div class="filter-grid">
+            <label class="field" for="name">
+              <span>姓名</span>
+              <input type="search" name="name" id="name" placeholder="輸入姓名" maxlength="160" autocomplete="off">
+            </label>
+            <label class="field" for="department">
+              <span>部門</span>
+              <select name="department" id="department"><option value="">全部部門</option></select>
+            </label>
+            <label class="field" for="card">
+              <span>卡號</span>
+              <input type="search" name="card" id="card" placeholder="輸入卡號" maxlength="160" autocomplete="off">
+            </label>
+            <label class="field" for="device">
+              <span>裝置名稱</span>
+              <select name="device" id="device"><option value="">全部裝置</option></select>
+            </label>
+            <fieldset class="field date-range">
+              <legend>日期時間</legend>
+              <div class="date-controls">
+                <input type="datetime-local" name="start" id="start" aria-label="起始日期時間" aria-describedby="filter-error">
+                <span aria-hidden="true">至</span>
+                <input type="datetime-local" name="end" id="end" aria-label="結束日期時間" aria-describedby="filter-error">
+              </div>
+            </fieldset>
+            <label class="field" for="door">
+              <span>門禁點</span>
+              <select name="door" id="door"><option value="">全部門禁點</option></select>
+            </label>
+            <label class="field" for="event">
+              <span>事件說明</span>
+              <select name="event" id="event"><option value="">全部事件</option></select>
+            </label>
+          </div>
+
+          <div class="filter-footer">
+            <p id="filter-error" class="field-error" role="alert" hidden></p>
+            <button type="button" id="clear-filters" class="button button-plain">清除條件</button>
+            <button type="submit" class="button button-primary"><span class="icon icon-search" aria-hidden="true"></span>查詢</button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+
+    <section class="panel results-panel" id="results" aria-labelledby="report-heading">
+      <div class="panel-heading results-heading">
+        <div class="report-label">
+          <h2 id="report-heading">歷史資料一覽表</h2>
+          <p id="result-summary" class="result-summary" role="status">正在讀取資料</p>
+        </div>
+        <div class="report-actions" role="group" aria-label="報表動作">
+          <button type="button" id="edit-title" class="button button-secondary"><span class="icon icon-note" aria-hidden="true"></span>報表抬頭</button>
+          <button type="button" id="print" class="button button-secondary" title="列印目前頁面" disabled><span class="icon icon-print" aria-hidden="true"></span>列印</button>
+          <button type="button" id="export" class="button button-export" title="匯出所有符合查詢條件的紀錄" disabled><span class="icon icon-export" aria-hidden="true"></span><span id="export-label">匯出 Excel</span></button>
+        </div>
+      </div>
+      <p id="export-status" class="sr-only" role="status"></p>
+
+      <div class="results-feedback" id="feedback" hidden>
+        <p id="feedback-message" role="alert"></p>
+        <button type="button" id="retry" class="button button-secondary">重試</button>
+      </div>
+
+      <div class="records-frame" id="records-frame" aria-busy="true">
+        <div class="table-scroll" id="table-scroll" tabindex="0" role="region" aria-label="歷史紀錄表格">
+          <table>
+            <caption class="sr-only">門禁刷卡紀錄</caption>
+            <thead>
+              <tr>
+                <th scope="col">裝置名稱</th>
+                <th scope="col">門禁點</th>
+                <th scope="col">部門</th>
+                <th scope="col">姓名</th>
+                <th scope="col">工號</th>
+                <th scope="col">卡號</th>
+                <th scope="col" class="date-column">日期時間</th>
+                <th scope="col">事件說明</th>
+              </tr>
+            </thead>
+            <tbody id="records">
+              <tr><td colspan="8" class="empty-cell"><strong>正在讀取門禁紀錄</strong><span>首次讀取較大的資料庫可能需要一些時間。</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="results-footer">
+        <label class="page-size" for="page-size">每頁
+          <select id="page-size" disabled>
+            <option value="15">15 筆</option>
+            <option value="25">25 筆</option>
+            <option value="50">50 筆</option>
+            <option value="100">100 筆</option>
+          </select>
+        </label>
+        <nav class="pager" aria-label="查詢結果分頁">
+          <button type="button" id="previous-page" class="button button-secondary button-icon" aria-label="上一頁" disabled><span class="chevron chevron-left" aria-hidden="true"></span></button>
+          <span id="page-label" class="page-label" aria-live="polite">第 0 / 0 頁</span>
+          <button type="button" id="next-page" class="button button-secondary button-icon" aria-label="下一頁" disabled><span class="chevron" aria-hidden="true"></span></button>
+        </nav>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="title-dialog" aria-labelledby="title-heading">
+    <form id="title-form" class="title-form">
+      <h2 id="title-heading">設定報表抬頭</h2>
+      <label class="field" for="title-input">
+        <span>報表抬頭</span>
+        <input type="text" id="title-input" maxlength="60" aria-describedby="title-hint" autofocus>
+      </label>
+      <p class="dialog-hint" id="title-hint">留白可恢復預設抬頭。</p>
+      <div class="dialog-actions">
+        <button type="button" class="button button-secondary" id="cancel-title">取消</button>
+        <button type="submit" class="button button-primary">儲存</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

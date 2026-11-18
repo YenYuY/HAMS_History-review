@@ -1,0 +1,15 @@
+*.[mM][dD][bB]
+*.[lL][dD][bB]
+*.[aA][cC][cC][dD][bB]
+*.[aA][cC][cC][dD][eE]
+*.[lL][aA][cC][cC][dD][bB]
+*.sqlite*
+*.db
+*.db-*
+*.xlsx
+*.log
+.hams-snapshots/
+/.cache/
+/dist/
+__pycache__/
+.DS_Store
