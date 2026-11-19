@@ -194,7 +194,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(result)
         elif path == "/api/records":
             page = positive_int(params.get("page", "1"), "頁碼", 1_000_000)
-            size = positive_int(params.get("pageSize", str(DEFAULT_PAGE_SIZE)), "每頁筆數", 100)
+            size = positive_int(params.get("pageSize", str(DEFAULT_PAGE_SIZE)), "每頁筆數", 300)
             filters = read_filters(params)
             filters["year"] = year
             self.send_json(data.search(filters, page, size))

@@ -16,6 +16,8 @@ const tableScroll = byId("table-scroll");
 const pageSize = byId("page-size");
 const previous = byId("previous-page");
 const next = byId("next-page");
+const jumpPage = byId("jump-page");
+const jumpSubmit = byId("jump-submit");
 const print = byId("print");
 const exportButton = byId("export");
 const start = byId("start");
@@ -135,6 +137,8 @@ function updateControls() {
   pageSize.disabled = busy || applied === null;
   previous.disabled = busy || page < 2;
   next.disabled = busy || page >= pages;
+  jumpPage.max = Math.max(1, pages);
+  jumpPage.disabled = jumpSubmit.disabled = busy || pages < 2;
   print.disabled = busy || !hasRows;
   exportButton.disabled = busy || !hasRows || exporting;
   recordsFrame.setAttribute("aria-busy", String(busy));
@@ -173,7 +177,10 @@ function renderResults(resetScroll = true) {
   byId("page-label").textContent = `第 ${formatNumber.format(page)} / ${formatNumber.format(pages)} 頁`;
   pageSize.value = String(applied.pageSize);
   renderRows(applied.rows);
-  if (resetScroll) tableScroll.scrollTop = 0;
+  if (resetScroll) {
+    jumpPage.value = "";
+    tableScroll.scrollTop = 0;
+  }
 }
 
 async function runQuery(params, page = 1, size = Number(pageSize.value)) {
@@ -346,6 +353,7 @@ async function refreshPublishedPreview() {
     activeSource = options.source || activeSource;
     applied = { ...result, params: current.params };
     renderResults(false);
+    updateControls();
     updateSource({ state: "ready", source: activeSource, snapshot: result.snapshot });
   } catch {
     // Keep the last displayed results, and retry the next time the preview checks for updates.
@@ -437,6 +445,10 @@ byId("retry").addEventListener("click", () => retryAction?.());
 pageSize.addEventListener("change", () => navigatePage(1));
 previous.addEventListener("click", () => navigatePage(applied.page - 1));
 next.addEventListener("click", () => navigatePage(applied.page + 1));
+byId("page-jump").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!jumpPage.disabled) navigatePage(jumpPage.valueAsNumber);
+});
 print.addEventListener("click", () => window.print());
 
 async function downloadReport() {

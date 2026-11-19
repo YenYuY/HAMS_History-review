@@ -224,6 +224,7 @@ tbody tr:not(:has(.empty-cell)):hover { background: var(--tint); }
 
 .results-footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding: 0.8rem 1.25rem;
@@ -231,9 +232,12 @@ tbody tr:not(:has(.empty-cell)):hover { background: var(--tint); }
   font-size: 0.8125rem;
   color: var(--secondary);
 }
-.page-size, .pager { display: flex; align-items: center; gap: 0.6rem; }
+.page-size, .pager, .page-buttons, .page-jump { display: flex; align-items: center; gap: 0.6rem; }
+.pager { flex-wrap: wrap; justify-content: flex-end; margin-inline-start: auto; }
 .page-size select { min-height: 2.125rem; min-width: 4.4rem; padding-block: 0.2rem; font-size: inherit; }
 .page-label { min-width: 7ch; text-align: center; font-variant-numeric: tabular-nums; }
+.page-jump :is(input, .button) { min-height: 2.125rem; padding-block: 0.2rem; font-size: inherit; }
+.page-jump input { width: 5.75rem; padding-inline: 0.5rem; font-variant-numeric: tabular-nums; }
 .button-icon { min-height: 2.125rem; min-width: 2.125rem; padding: 0.35rem; }
 .chevron { width: 0.45rem; height: 0.45rem; border: solid currentColor; border-width: 1.5px 1.5px 0 0; rotate: 45deg; }
 .chevron-left { rotate: -135deg; }
@@ -279,7 +283,7 @@ dialog::backdrop { background: oklch(0.17 0.018 0 / 0.41); }
 @media (max-width: 32rem) {
   .date-controls { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
   .date-controls span { justify-self: start; }
-  input, select, .page-size select { font-size: 1rem; }
+  input, select, .page-size select, .page-jump input { font-size: 1rem; }
   .report-actions .button { padding-inline: 0.55rem; gap: 0.35rem; }
   .field-error { flex-basis: 100%; }
 }

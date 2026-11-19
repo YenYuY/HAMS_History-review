@@ -130,12 +130,21 @@
             <option value="25">25 筆</option>
             <option value="50">50 筆</option>
             <option value="100">100 筆</option>
+            <option value="200">200 筆</option>
+            <option value="300">300 筆</option>
           </select>
         </label>
         <nav class="pager" aria-label="查詢結果分頁">
-          <button type="button" id="previous-page" class="button button-secondary button-icon" aria-label="上一頁" disabled><span class="chevron chevron-left" aria-hidden="true"></span></button>
-          <span id="page-label" class="page-label" aria-live="polite">第 0 / 0 頁</span>
-          <button type="button" id="next-page" class="button button-secondary button-icon" aria-label="下一頁" disabled><span class="chevron" aria-hidden="true"></span></button>
+          <div class="page-buttons">
+            <button type="button" id="previous-page" class="button button-secondary button-icon" aria-label="上一頁" disabled><span class="chevron chevron-left" aria-hidden="true"></span></button>
+            <span id="page-label" class="page-label" aria-live="polite">第 0 / 0 頁</span>
+            <button type="button" id="next-page" class="button button-secondary button-icon" aria-label="下一頁" disabled><span class="chevron" aria-hidden="true"></span></button>
+          </div>
+          <form id="page-jump" class="page-jump">
+            <label for="jump-page" class="sr-only">頁碼</label>
+            <input type="number" id="jump-page" min="1" step="1" inputmode="numeric" placeholder="頁碼" aria-describedby="page-label" required disabled>
+            <button type="submit" id="jump-submit" class="button button-secondary" disabled>跳頁</button>
+          </form>
         </nav>
       </div>
     </section>
